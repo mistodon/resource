@@ -1,0 +1,22 @@
+[package]
+name = "static_assets"
+version = "0.1.0"
+authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
+description = """
+Macros for statically including assets in release mode, but dynamically loading them in debug mode.
+
+This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets in debug mode.
+"""
+repository = "https://github.com/Pirh/static_assets"
+readme = "README.md"
+keywords = ["static", "include", "assets", "release"]
+categories = ["filesystem", "games"]
+license = "CC0-1.0"
+
+[dependencies]
+
+[features]
+default = []
+force-static = []
+force-dynamic = []
+
