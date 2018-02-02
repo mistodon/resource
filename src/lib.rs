@@ -1,3 +1,26 @@
+//! This crate contains macros for statically including assets in release mode, but dynamically loading them in debug mode.
+//!
+//! This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets
+//! in debug mode.
+
+/// Load a text asset statically in release mode, or dynamically in debug.
+///
+/// The filename is relative to the root of your crate.
+///
+/// If you wish to override the static/dynamic behaviour, you can use the `force-static` or `force-dynamic`
+/// features.
+///
+/// # Panics
+///
+/// When running in debug mode, this will panic if the file does not exist. In release mode, this
+/// will be a compile error and will never panic.
+///
+/// # Examples
+///
+/// ```rust,ignore
+/// let toml = asset_str!("Cargo.toml");
+/// println!("{}", toml);
+/// ```
 #[macro_export]
 macro_rules! asset_str
 {
@@ -21,6 +44,24 @@ macro_rules! asset_str
 }
 
 
+/// Load a binary asset statically in release mode, or dynamically in debug.
+///
+/// The filename is relative to the root of your crate.
+///
+/// If you wish to override the static/dynamic behaviour, you can use the `force-static` or `force-dynamic`
+/// features.
+///
+/// # Panics
+///
+/// When running in debug mode, this will panic if the file does not exist. In release mode, this
+/// will be a compile error and will never panic.
+///
+/// # Examples
+///
+/// ```rust,ignore
+/// let toml_bytes = asset_bytes!("Cargo.toml");
+/// println!("{:?}", toml_bytes);
+/// ```
 #[macro_export]
 macro_rules! asset_bytes
 {
@@ -44,6 +85,7 @@ macro_rules! asset_bytes
 }
 
 
+/// Used internally by [`asset_str!`](macro.asset_str.html) when loading dynamically.
 #[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
 #[inline]
 pub fn load_str(filepath: &str) -> String
@@ -58,6 +100,7 @@ pub fn load_str(filepath: &str) -> String
 }
 
 
+/// Used internally by [`asset_bytes!`](macro.asset_bytes.html) when loading dynamically.
 #[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
 #[inline]
 pub fn load_bytes(filepath: &str) -> Vec<u8>
