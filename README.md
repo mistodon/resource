@@ -11,7 +11,7 @@ This is primarily intended for games, allowing you to both avoid file IO in rele
 
 ```toml
 [dependencies]
-static_assets = "~0.1.0"
+static_assets = "~0.2.0"
 ```
 
 ```rust
@@ -23,8 +23,12 @@ println!("Text is: {}", text);
 
 let bytes = asset_bytes!("assets/binary_asset.bin");
 println!("Binary data is: {:?}", bytes);
-```
 
+let (a, b, c) = load_strings!(("a.txt", "b.txt", "c.txt"));
+println!("Contents of the three files are: `{}`, `{}`, `{}`");
+
+let decoded_images = load_bytes!(["a.png", "b.png", "c.png"], |image: &[u8]| decode(image));
+```
 
 ## Internals
 
