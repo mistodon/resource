@@ -31,4 +31,3 @@ The `asset_str!` and `asset_bytes!` macros return [`Cow`](https://doc.rust-lang.
 If you're not familiar with the `Cow` type, what this means is that under the hood, they can be either a reference to some `const` data (in release mode) or some actual owned data on the heap (in debug mode).
 
 You shouldn't have to care about this though because the above `Cow` types can deref to `&str` and `&[u8]` respectively. Just pass them by reference and treat them as strings/slices.
-
