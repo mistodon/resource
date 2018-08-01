@@ -11,7 +11,7 @@ repository = "https://github.com/mistodon/static_assets"
 readme = "README.md"
 keywords = ["static", "include", "assets", "release"]
 categories = ["filesystem", "games"]
-license = "MIT"
+license = "CC0-1.0"
 
 [dependencies]
 
