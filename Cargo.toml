@@ -20,3 +20,5 @@ default = []
 force-static = []
 force-dynamic = []
 
+[badges]
+travis-ci = { repository = "Mistodon/static_assets" }

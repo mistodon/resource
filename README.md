@@ -4,6 +4,8 @@ The `static_assets` crate contains macros for statically including assets in rel
 
 This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets in debug mode.
 
+[![Build Status](https://travis-ci.org/Mistodon/static_assets.svg?branch=master)](https://travis-ci.org/Mistodon/static_assets)
+[![Crates.io](https://img.shields.io/crates/v/static_assets.svg)](https://crates.io/crates/static_assets)
 
 ## Usage
 
