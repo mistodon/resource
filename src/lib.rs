@@ -4,6 +4,9 @@
 //! This is primarily intended for games, allowing you to both avoid file IO in
 //! release builds and dynamically reload resources in debug mode.
 //!
+//! You can change the default behaviour, in debug or release mode, by using the
+//! `force-static` and `force-dynamic` features.
+//!
 //! ```rust,ignore
 //! // Include text
 //! let readme_text = resource_str!("README.md");
@@ -19,6 +22,9 @@
 //!     ("assets/light.png", "assets/dark.png"),
 //!     Texture::decode);
 //! ```
+
+#[cfg(all(feature = "force-static", feature = "force-dynamic"))]
+compile_error!("resource: Cannot enable both the force-static and force-dynamic features.");
 
 /// Load text resources statically in release mode, or dynamically in debug.
 ///
@@ -37,22 +43,39 @@
 ///
 /// # Examples
 ///
+/// Load a single text file:
+///
 /// ```rust
 /// # #[macro_use]
 /// # extern crate resource;
-/// # fn main () {
+/// # fn main() {
+/// let toml = resource_str!("Cargo.toml");
+/// assert!(toml.contains("[package]"));
+/// # }
+/// ```
+///
+/// Load an array or tuple of text files:
+///
+/// ```rust
+/// # #[macro_use]
+/// # extern crate resource;
+/// # fn main() {
 /// let (toml, lib) = resource_str!(("Cargo.toml", "src/lib.rs"));
 /// let as_array = resource_str!(["Cargo.toml", "src/lib.rs"]);
+///
 /// assert_eq!(toml, as_array[0]);
 /// assert_eq!(lib, as_array[1]);
 /// # }
 /// ```
 ///
+/// Load multiple text files and apply a transformation to each one:
+///
 /// ```rust
 /// # #[macro_use]
 /// # extern crate resource;
-/// # fn main () {
+/// # fn main() {
 /// let [toml, lib] = resource_str!(["Cargo.toml", "src/lib.rs"], str::to_uppercase);
+///
 /// assert!(toml.contains("RESOURCE"));
 /// assert!(lib.contains("MACRO_RULES"));
 /// # }
@@ -110,7 +133,7 @@ macro_rules! resource_str {
     }};
 }
 
-/// Load multiple binary resources statically in release mode, or dynamically in
+/// Load binary resources statically in release mode, or dynamically in
 /// debug.
 ///
 /// The filenames are relative to the root of your crate.
@@ -128,24 +151,42 @@ macro_rules! resource_str {
 ///
 /// # Examples
 ///
+/// Load a single binary file:
+///
 /// ```rust
 /// # #[macro_use]
 /// # extern crate resource;
-/// # fn main () {
+/// # fn main() {
+/// let toml = resource!("Cargo.toml");
+/// assert_eq!(&toml[0..9], b"[package]");
+/// # }
+/// ```
+///
+/// Load an array or tuple of binary files:
+///
+/// ```rust
+/// # #[macro_use]
+/// # extern crate resource;
+/// # fn main() {
 /// let (toml, lib) = resource!(("Cargo.toml", "src/lib.rs"));
 /// let as_array = resource!(["Cargo.toml", "src/lib.rs"]);
+///
 /// assert_eq!(toml, as_array[0]);
 /// assert_eq!(lib, as_array[1]);
 /// # }
 /// ```
 ///
+/// Load binary files and apply a transformation to each one:
+///
 /// ```rust
 /// # #[macro_use]
 /// # extern crate resource;
-/// # fn main () {
-/// let [toml] = resource!(["Cargo.toml"],
+/// # fn main() {
+/// let [toml, lib] = resource!(["Cargo.toml", "src/lib.rs"],
 ///     |bytes: &[u8]| bytes.to_ascii_uppercase());
+///
 /// assert_eq!(&toml[0..9], b"[PACKAGE]");
+/// assert_eq!(&lib[0..4], b"//! ");
 /// # }
 /// ```
 #[macro_export]
