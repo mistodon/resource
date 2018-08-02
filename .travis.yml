@@ -11,7 +11,7 @@ matrix:
           cargo test --features force-static &&
           cargo test --release &&
           cargo test --release --features force-dynamic &&
-          cargo fmt -- --write-mode=check
+          cargo fmt -- --check
 
     - rust: nightly
       before_script:

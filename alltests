@@ -15,7 +15,7 @@ echo "\033[36;1mRunning tests on release with force-dynamic:\033[0m"
 cargo test --release --features force-dynamic
 
 echo "\033[36;1mRunning rustfmt:\033[0m"
-cargo fmt -- --write-mode=check
+cargo fmt -- --check
 
 echo "\033[36;1mRunning clippy:\033[0m"
-cargo +nightly clippy --all-features -- -D clippy
+cargo +nightly clippy -- -D clippy
