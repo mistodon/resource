@@ -8,6 +8,7 @@ You can change the default behaviour, in debug or release mode, by using the `fo
 
 [![Build Status](https://travis-ci.org/Mistodon/resource.svg?branch=master)](https://travis-ci.org/Mistodon/resource)
 [![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
+[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.2.0/resource/)
 
 ## Usage
 
