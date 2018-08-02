@@ -1,7 +1,7 @@
 #![cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
 
 #[macro_use]
-extern crate static_assets;
+extern crate resource;
 
 #[test]
 fn include_str_asset_dynamic() {

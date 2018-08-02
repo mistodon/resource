@@ -1,22 +1,22 @@
-# static_assets
+# resource
 
-The `static_assets` crate contains macros for statically including assets in release mode, but dynamically loading them in debug mode.
+The `resource` crate contains macros for statically including assets in release mode, but dynamically loading them in debug mode.
 
 This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets in debug mode.
 
-[![Build Status](https://travis-ci.org/Mistodon/static_assets.svg?branch=master)](https://travis-ci.org/Mistodon/static_assets)
-[![Crates.io](https://img.shields.io/crates/v/static_assets.svg)](https://crates.io/crates/static_assets)
+[![Build Status](https://travis-ci.org/Mistodon/resource.svg?branch=master)](https://travis-ci.org/Mistodon/resource)
+[![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
 
 ## Usage
 
 ```toml
 [dependencies]
-static_assets = "~0.2.0"
+resource = "~0.2.0"
 ```
 
 ```rust
 #[macro_use]
-extern crate static_assets;
+extern crate resource;
 
 let text = resource_str!("assets/text_asset.txt");
 println!("Text is: {}", text);
