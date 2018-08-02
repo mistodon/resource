@@ -18,21 +18,21 @@ static_assets = "~0.2.0"
 #[macro_use]
 extern crate static_assets;
 
-let text = asset_str!("assets/text_asset.txt");
+let text = resource_str!("assets/text_asset.txt");
 println!("Text is: {}", text);
 
-let bytes = asset_bytes!("assets/binary_asset.bin");
+let bytes = resource!("assets/binary_asset.bin");
 println!("Binary data is: {:?}", bytes);
 
-let (a, b, c) = asset_str!(("a.txt", "b.txt", "c.txt"));
+let (a, b, c) = resource_str!(("a.txt", "b.txt", "c.txt"));
 println!("Contents of the three files are: `{}`, `{}`, `{}`");
 
-let decoded_images = asset_bytes!(["a.png", "b.png", "c.png"], |image: &[u8]| decode(image));
+let decoded_images = resource!(["a.png", "b.png", "c.png"], |image: &[u8]| decode(image));
 ```
 
 ## Internals
 
-The `asset_str!` and `asset_bytes!` macros return [`Cow`](https://doc.rust-lang.org/std/borrow/enum.Cow.html) values - `Cow<'static, str>` and `Cow<'static, [u8]>` respectively.
+The `resource_str!` and `resource!` macros return [`Cow`](https://doc.rust-lang.org/std/borrow/enum.Cow.html) values - `Cow<'static, str>` and `Cow<'static, [u8]>` respectively.
 
 If you're not familiar with the `Cow` type, what this means is that under the hood, they can be either a reference to some `const` data (in release mode) or some actual owned data on the heap (in debug mode).
 

@@ -1,26 +1,26 @@
-//! This crate contains macros for statically including assets in release mode,
+//! This crate contains macros for statically including resources in release mode,
 //! but dynamically loading them in debug mode.
 //!
 //! This is primarily intended for games, allowing you to both avoid file IO in
-//! release builds and dynamically reload assets in debug mode.
+//! release builds and dynamically reload resources in debug mode.
 //!
 //! ```rust,ignore
 //! // Include text
-//! let readme_text = asset_str!("README.md");
+//! let readme_text = resource_str!("README.md");
 //!
 //! // Include bytes
-//! let logo_bytes = asset_bytes!("assets/logo.png");
+//! let logo_bytes = resource!("assets/logo.png");
 //!
 //! // Load multiple strings
-//! let translations = asset_str!(["english.txt", "italiano.txt"]);
+//! let translations = resource_str!(["english.txt", "italiano.txt"]);
 //!
-//! // Load and process multiple binary assets
-//! let (light_texture, dark_texture) = asset_bytes!(
+//! // Load and process multiple binary resources
+//! let (light_texture, dark_texture) = resource!(
 //!     ("assets/light.png", "assets/dark.png"),
 //!     Texture::decode);
 //! ```
 
-/// Load text assets statically in release mode, or dynamically in debug.
+/// Load text resources statically in release mode, or dynamically in debug.
 ///
 /// The filenames are relative to the root of your crate.
 ///
@@ -41,8 +41,8 @@
 /// # #[macro_use]
 /// # extern crate static_assets;
 /// # fn main () {
-/// let (toml, lib) = asset_str!(("Cargo.toml", "src/lib.rs"));
-/// let as_array = asset_str!(["Cargo.toml", "src/lib.rs"]);
+/// let (toml, lib) = resource_str!(("Cargo.toml", "src/lib.rs"));
+/// let as_array = resource_str!(["Cargo.toml", "src/lib.rs"]);
 /// assert_eq!(toml, as_array[0]);
 /// assert_eq!(lib, as_array[1]);
 /// # }
@@ -52,31 +52,31 @@
 /// # #[macro_use]
 /// # extern crate static_assets;
 /// # fn main () {
-/// let [toml, lib] = asset_str!(["Cargo.toml", "src/lib.rs"], str::to_uppercase);
+/// let [toml, lib] = resource_str!(["Cargo.toml", "src/lib.rs"], str::to_uppercase);
 /// assert!(toml.contains("STATIC_ASSETS"));
 /// assert!(lib.contains("MACRO_RULES"));
 /// # }
 /// ```
 #[macro_export]
-macro_rules! asset_str {
+macro_rules! resource_str {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
-        [ $($load_fn(asset_str!($filenames).as_ref())),* ]
+        [ $($load_fn(resource_str!($filenames).as_ref())),* ]
     };
 
     (( $($filenames:tt),* $(,)* ), $load_fn:expr) => {
-        ( $($load_fn(asset_str!($filenames).as_ref())),* )
+        ( $($load_fn(resource_str!($filenames).as_ref())),* )
     };
 
     ([ $($filenames:tt),* $(,)* ]) => {
-        [ $(asset_str!($filenames)),* ]
+        [ $(resource_str!($filenames)),* ]
     };
 
     (( $($filenames:tt),* $(,)* )) => {
-        ( $(asset_str!($filenames)),* )
+        ( $(resource_str!($filenames)),* )
     };
 
     ($filename:tt, $load_fn:expr) => {
-        $load_fn(asset_str!($filename).as_ref())
+        $load_fn(resource_str!($filename).as_ref())
     };
 
     ($filename:tt) => {{
@@ -86,8 +86,8 @@ macro_rules! asset_str {
             )
         )]
         {
-            const ASSET: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
-            let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Borrowed(ASSET);
+            const RESOURCE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
+            let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Borrowed(RESOURCE);
 
             result
         }
@@ -96,21 +96,22 @@ macro_rules! asset_str {
         {
             let path = concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename);
 
-            let asset = ::std::fs::read_to_string(path).expect(concat!(
+            let resource = ::std::fs::read_to_string(path).expect(concat!(
                 "Failed to load string from: ",
                 env!("CARGO_MANIFEST_DIR"),
                 "/",
                 $filename
             ));
 
-            let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Owned(asset);
+            let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Owned(resource);
 
             result
         }
     }};
 }
 
-/// Load multiple binary assets statically in release mode, or dynamically in debug.
+/// Load multiple binary resources statically in release mode, or dynamically in
+/// debug.
 ///
 /// The filenames are relative to the root of your crate.
 ///
@@ -131,8 +132,8 @@ macro_rules! asset_str {
 /// # #[macro_use]
 /// # extern crate static_assets;
 /// # fn main () {
-/// let (toml, lib) = asset_bytes!(("Cargo.toml", "src/lib.rs"));
-/// let as_array = asset_bytes!(["Cargo.toml", "src/lib.rs"]);
+/// let (toml, lib) = resource!(("Cargo.toml", "src/lib.rs"));
+/// let as_array = resource!(["Cargo.toml", "src/lib.rs"]);
 /// assert_eq!(toml, as_array[0]);
 /// assert_eq!(lib, as_array[1]);
 /// # }
@@ -142,31 +143,31 @@ macro_rules! asset_str {
 /// # #[macro_use]
 /// # extern crate static_assets;
 /// # fn main () {
-/// let [toml] = asset_bytes!(["Cargo.toml"],
+/// let [toml] = resource!(["Cargo.toml"],
 ///     |bytes: &[u8]| bytes.to_ascii_uppercase());
 /// assert_eq!(&toml[0..9], b"[PACKAGE]");
 /// # }
 /// ```
 #[macro_export]
-macro_rules! asset_bytes {
+macro_rules! resource {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
-        [ $($load_fn(asset_bytes!($filenames).as_ref())),* ]
+        [ $($load_fn(resource!($filenames).as_ref())),* ]
     };
 
     (( $($filenames:tt),* $(,)* ), $load_fn:expr) => {
-        ( $($load_fn(asset_bytes!($filenames).as_ref())),* )
+        ( $($load_fn(resource!($filenames).as_ref())),* )
     };
 
     ([ $($filenames:tt),* $(,)* ]) => {
-        [ $(asset_bytes!($filenames)),* ]
+        [ $(resource!($filenames)),* ]
     };
 
     (( $($filenames:tt),* $(,)* )) => {
-        ( $(asset_bytes!($filenames)),* )
+        ( $(resource!($filenames)),* )
     };
 
     ($filename:tt, $load_fn:expr) => {
-        $load_fn(asset_bytes!($filename).as_ref())
+        $load_fn(resource!($filename).as_ref())
     };
 
     ($filename:tt) => {{
@@ -176,9 +177,9 @@ macro_rules! asset_bytes {
             )
         )]
         {
-            const ASSET: &[u8] =
+            const RESOURCE: &[u8] =
                 include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
-            let result: ::std::borrow::Cow<'static, [u8]> = ::std::borrow::Cow::Borrowed(ASSET);
+            let result: ::std::borrow::Cow<'static, [u8]> = ::std::borrow::Cow::Borrowed(RESOURCE);
 
             result
         }
@@ -187,14 +188,14 @@ macro_rules! asset_bytes {
         {
             let path = concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename);
 
-            let asset = ::std::fs::read(path).expect(concat!(
+            let resource = ::std::fs::read(path).expect(concat!(
                 "Failed to load bytes from: ",
                 env!("CARGO_MANIFEST_DIR"),
                 "/",
                 $filename
             ));
 
-            let result: ::std::borrow::Cow<'static, [u8]> = ::std::borrow::Cow::Owned(asset);
+            let result: ::std::borrow::Cow<'static, [u8]> = ::std::borrow::Cow::Owned(resource);
 
             result
         }

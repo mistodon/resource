@@ -11,7 +11,7 @@ fn rev_bytes(bytes: &[u8]) -> Vec<u8> {
 
 #[test]
 fn load_array_of_multiple_strings() {
-    let [a, b, c] = asset_str!([
+    let [a, b, c] = resource_str!([
         "tests/string_a.txt",
         "tests/string_b.txt",
         "tests/string_c.txt",
@@ -22,7 +22,7 @@ fn load_array_of_multiple_strings() {
 
 #[test]
 fn load_tuple_of_multiple_strings() {
-    let (a, b, c) = asset_str!((
+    let (a, b, c) = resource_str!((
         "tests/string_a.txt",
         "tests/string_b.txt",
         "tests/string_c.txt",
@@ -35,7 +35,7 @@ fn load_tuple_of_multiple_strings() {
 
 #[test]
 fn load_array_of_multiple_bytes() {
-    let [a, b, c] = asset_bytes!([
+    let [a, b, c] = resource!([
         "tests/bytes_a.bin",
         "tests/bytes_b.bin",
         "tests/bytes_c.bin",
@@ -53,7 +53,7 @@ fn load_array_of_multiple_bytes() {
 
 #[test]
 fn load_tuple_of_multiple_bytes() {
-    let (a, b, c) = asset_bytes!((
+    let (a, b, c) = resource!((
         "tests/bytes_a.bin",
         "tests/bytes_b.bin",
         "tests/bytes_c.bin",
@@ -66,7 +66,7 @@ fn load_tuple_of_multiple_bytes() {
 
 #[test]
 fn load_with_fn_array_of_multiple_strings() {
-    let [a, b, c] = asset_str!(
+    let [a, b, c] = resource_str!(
         [
             "tests/string_a.txt",
             "tests/string_b.txt",
@@ -80,7 +80,7 @@ fn load_with_fn_array_of_multiple_strings() {
 
 #[test]
 fn load_with_fn_tuple_of_multiple_strings() {
-    let (a, b, c) = asset_str!(
+    let (a, b, c) = resource_str!(
         (
             "tests/string_a.txt",
             "tests/string_b.txt",
@@ -96,7 +96,7 @@ fn load_with_fn_tuple_of_multiple_strings() {
 
 #[test]
 fn load_with_fn_array_of_multiple_bytes() {
-    let [a, b, c] = asset_bytes!(
+    let [a, b, c] = resource!(
         [
             "tests/bytes_a.bin",
             "tests/bytes_b.bin",
@@ -117,7 +117,7 @@ fn load_with_fn_array_of_multiple_bytes() {
 
 #[test]
 fn load_with_fn_tuple_of_multiple_bytes() {
-    let (a, b, c) = asset_bytes!(
+    let (a, b, c) = resource!(
         (
             "tests/bytes_a.bin",
             "tests/bytes_b.bin",
