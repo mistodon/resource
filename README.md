@@ -4,6 +4,8 @@ The `resource` crate contains macros for statically including assets in release 
 
 This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets in debug mode.
 
+You can change the default behaviour, in debug or release mode, by using the `force-static` and `force-dynamic` features.
+
 [![Build Status](https://travis-ci.org/Mistodon/resource.svg?branch=master)](https://travis-ci.org/Mistodon/resource)
 [![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
 
