@@ -11,12 +11,12 @@ fn rev_bytes(bytes: &[u8]) -> Vec<u8> {
 
 #[test]
 fn transform_single_string() {
-    let s = asset_str!("tests/str.txt", rev_string);
+    let s = resource_str!("tests/str.txt", rev_string);
     assert_eq!(s, "\ngnirts\na\nsi\nsihT");
 }
 
 #[test]
 fn transform_single_bytes() {
-    let s = asset_bytes!("tests/bytes.bin", rev_bytes);
+    let s = resource!("tests/bytes.bin", rev_bytes);
     assert_eq!(s, &[52, 51, 50, 49, 48]);
 }
