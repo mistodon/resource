@@ -39,7 +39,7 @@
 ///
 /// ```rust
 /// # #[macro_use]
-/// # extern crate static_assets;
+/// # extern crate resource;
 /// # fn main () {
 /// let (toml, lib) = resource_str!(("Cargo.toml", "src/lib.rs"));
 /// let as_array = resource_str!(["Cargo.toml", "src/lib.rs"]);
@@ -50,10 +50,10 @@
 ///
 /// ```rust
 /// # #[macro_use]
-/// # extern crate static_assets;
+/// # extern crate resource;
 /// # fn main () {
 /// let [toml, lib] = resource_str!(["Cargo.toml", "src/lib.rs"], str::to_uppercase);
-/// assert!(toml.contains("STATIC_ASSETS"));
+/// assert!(toml.contains("RESOURCE"));
 /// assert!(lib.contains("MACRO_RULES"));
 /// # }
 /// ```
@@ -130,7 +130,7 @@ macro_rules! resource_str {
 ///
 /// ```rust
 /// # #[macro_use]
-/// # extern crate static_assets;
+/// # extern crate resource;
 /// # fn main () {
 /// let (toml, lib) = resource!(("Cargo.toml", "src/lib.rs"));
 /// let as_array = resource!(["Cargo.toml", "src/lib.rs"]);
@@ -141,7 +141,7 @@ macro_rules! resource_str {
 ///
 /// ```rust
 /// # #[macro_use]
-/// # extern crate static_assets;
+/// # extern crate resource;
 /// # fn main () {
 /// let [toml] = resource!(["Cargo.toml"],
 ///     |bytes: &[u8]| bytes.to_ascii_uppercase());

@@ -1,5 +1,5 @@
 [package]
-name = "static_assets"
+name = "resource"
 version = "0.2.0"
 authors = ["Claire Harris <wishing.engine@gmail.com>"]
 description = """
@@ -7,7 +7,7 @@ Macros for statically including assets in release mode, but dynamically loading 
 
 This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets in debug mode.
 """
-repository = "https://github.com/mistodon/static_assets"
+repository = "https://github.com/mistodon/resource"
 readme = "README.md"
 keywords = ["static", "include", "assets", "release"]
 categories = ["filesystem", "games"]
@@ -21,4 +21,4 @@ force-static = []
 force-dynamic = []
 
 [badges]
-travis-ci = { repository = "Mistodon/static_assets" }
+travis-ci = { repository = "Mistodon/resource" }

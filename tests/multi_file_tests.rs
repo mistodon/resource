@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate static_assets;
+extern crate resource;
 
 fn rev_string(string: &str) -> String {
     string.chars().rev().collect()
