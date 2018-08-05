@@ -109,7 +109,13 @@ macro_rules! resource_str {
             )
         )]
         {
+
+            #[cfg(feature = "custom-path")]
+            const RESOURCE: &str = include_str!(concat!(env!("RESOURCE_ROOT"), "/", $filename));
+
+            #[cfg(not(feature = "custom-path"))]
             const RESOURCE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
+
             let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Borrowed(RESOURCE);
 
             result
@@ -117,14 +123,19 @@ macro_rules! resource_str {
 
         #[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
         {
-            let path = concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename);
+            #[cfg(feature = "custom-path")]
+            let (path, error) = (
+                concat!(env!("RESOURCE_ROOT"), "/", $filename),
+                concat!("Failed to load string from: ", env!("RESOURCE_ROOT"), "/", $filename),
+            );
 
-            let resource = ::std::fs::read_to_string(path).expect(concat!(
-                "Failed to load string from: ",
-                env!("CARGO_MANIFEST_DIR"),
-                "/",
-                $filename
-            ));
+            #[cfg(not(feature = "custom-path"))]
+            let (path, error) = (
+                concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename),
+                concat!("Failed to load string from: ", env!("CARGO_MANIFEST_DIR"), "/", $filename),
+            );
+
+            let resource = ::std::fs::read_to_string(path).expect(error);
 
             let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Owned(resource);
 

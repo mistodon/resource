@@ -20,5 +20,9 @@ default = []
 force-static = []
 force-dynamic = []
 
+# TODO: Do we need to use a feature? Can we auto-detect the env var?
+# TODO: Also, bikeshed feature name.
+custom-path = []
+
 [badges]
 travis-ci = { repository = "Mistodon/resource" }

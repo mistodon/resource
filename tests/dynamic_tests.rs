@@ -5,7 +5,12 @@ extern crate resource;
 
 #[test]
 fn include_str_asset_dynamic() {
+    #[cfg(not(feature = "custom-path"))]
     let expected = "This\nis\na\nstring\n";
+
+    #[cfg(feature = "custom-path")]
+    let expected = "This is a custom path!\n";
+
     let included = resource_str!("tests/str.txt");
     assert_eq!(included, expected);
 }
@@ -23,7 +28,12 @@ fn included_str_is_owned_dynamic() {
 
 #[test]
 fn include_binary_asset_dynamic() {
+    #[cfg(not(feature = "custom-path"))]
     let expected: &[u8] = &[48, 49, 50, 51, 52];
+
+    #[cfg(feature = "custom-path")]
+    let expected: &[u8] = &[72, 101, 108, 108, 111];
+
     let included = resource!("tests/bytes.bin");
     assert_eq!(included, expected);
 }

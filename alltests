@@ -14,6 +14,12 @@ cargo test --features force-static
 echo "\033[36;1mRunning tests on release with force-dynamic:\033[0m"
 cargo test --release --features force-dynamic
 
+echo "\033[36;1mRunning tests on debug with custom-path:\033[0m"
+RESOURCE_ROOT="../../custom_path" cargo test --features custom-path
+
+echo "\033[36;1mRunning tests on release with custom-path:\033[0m"
+RESOURCE_ROOT="../../custom_path" cargo test --release --features custom-path
+
 echo "\033[36;1mRunning rustfmt:\033[0m"
 cargo fmt -- --check
 
