@@ -80,6 +80,7 @@ compile_error!("resource: Cannot enable both the force-static and force-dynamic 
 /// assert!(lib.contains("MACRO_RULES"));
 /// # }
 /// ```
+#[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
 #[macro_export]
 macro_rules! resource_str {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
@@ -102,20 +103,7 @@ macro_rules! resource_str {
         $load_fn(resource_str!($filename).as_ref())
     };
 
-    ($filename:tt) => {{
-        #[cfg(
-            any(
-                feature = "force-static", all(not(feature = "force-dynamic"), not(debug_assertions))
-            )
-        )]
-        {
-            const RESOURCE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
-            let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Borrowed(RESOURCE);
-
-            result
-        }
-
-        #[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
+    ($filename:tt) => {
         {
             let path = concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename);
 
@@ -130,7 +118,40 @@ macro_rules! resource_str {
 
             result
         }
-    }};
+    };
+}
+
+#[cfg(any(feature = "force-static", all(not(feature = "force-dynamic"), not(debug_assertions))))]
+#[macro_export]
+macro_rules! resource_str {
+    ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
+        [ $($load_fn(resource_str!($filenames).as_ref())),* ]
+    };
+
+    (( $($filenames:tt),* $(,)* ), $load_fn:expr) => {
+        ( $($load_fn(resource_str!($filenames).as_ref())),* )
+    };
+
+    ([ $($filenames:tt),* $(,)* ]) => {
+        [ $(resource_str!($filenames)),* ]
+    };
+
+    (( $($filenames:tt),* $(,)* )) => {
+        ( $(resource_str!($filenames)),* )
+    };
+
+    ($filename:tt, $load_fn:expr) => {
+        $load_fn(resource_str!($filename).as_ref())
+    };
+
+    ($filename:tt) => {
+        {
+            const RESOURCE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
+            let result: ::std::borrow::Cow<'static, str> = ::std::borrow::Cow::Borrowed(RESOURCE);
+
+            result
+        }
+    };
 }
 
 /// Load binary resources statically in release mode, or dynamically in
@@ -189,6 +210,7 @@ macro_rules! resource_str {
 /// assert_eq!(&lib[0..4], b"//! ");
 /// # }
 /// ```
+#[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
 #[macro_export]
 macro_rules! resource {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
@@ -211,21 +233,7 @@ macro_rules! resource {
         $load_fn(resource!($filename).as_ref())
     };
 
-    ($filename:tt) => {{
-        #[cfg(
-            any(
-                feature = "force-static", all(not(feature = "force-dynamic"), not(debug_assertions))
-            )
-        )]
-        {
-            const RESOURCE: &[u8] =
-                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
-            let result: ::std::borrow::Cow<'static, [u8]> = ::std::borrow::Cow::Borrowed(RESOURCE);
-
-            result
-        }
-
-        #[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
+    ($filename:tt) => {
         {
             let path = concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename);
 
@@ -240,5 +248,39 @@ macro_rules! resource {
 
             result
         }
-    }};
+    };
+}
+
+#[cfg(any(feature = "force-static", all(not(feature = "force-dynamic"), not(debug_assertions))))]
+#[macro_export]
+macro_rules! resource {
+    ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
+        [ $($load_fn(resource!($filenames).as_ref())),* ]
+    };
+
+    (( $($filenames:tt),* $(,)* ), $load_fn:expr) => {
+        ( $($load_fn(resource!($filenames).as_ref())),* )
+    };
+
+    ([ $($filenames:tt),* $(,)* ]) => {
+        [ $(resource!($filenames)),* ]
+    };
+
+    (( $($filenames:tt),* $(,)* )) => {
+        ( $(resource!($filenames)),* )
+    };
+
+    ($filename:tt, $load_fn:expr) => {
+        $load_fn(resource!($filename).as_ref())
+    };
+
+    ($filename:tt) => {
+        {
+            const RESOURCE: &[u8] =
+                include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename));
+            let result: ::std::borrow::Cow<'static, [u8]> = ::std::borrow::Cow::Borrowed(RESOURCE);
+
+            result
+        }
+    };
 }
