@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+
+echo "\033[36;1mRunning tests on debug with default features:\033[0m"
+cargo test
+
+echo "\033[36;1mRunning tests on release with default features:\033[0m"
+cargo test --release
+
+echo "\033[36;1mRunning static-feature-tests:\033[0m"
+(cd static-feature-tests && \
+    cargo test && \
+    cargo test --release)
+
+echo "\033[36;1mRunning dynamic-feature-tests:\033[0m"
+(cd dynamic-feature-tests && \
+    cargo test && \
+    cargo test --release)
+
+echo "\033[36;1mRunning rustfmt:\033[0m"
+cargo fmt -- --check && \
+    (cd static-feature-tests && cargo fmt -- --check) && \
+    (cd dynamic-feature-tests && cargo fmt -- --check)

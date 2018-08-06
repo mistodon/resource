@@ -1,0 +1,8 @@
+[package]
+name = "dynamic-feature-tests"
+version = "0.1.0"
+authors = ["Claire Harris <wishing.engine@gmail.com>"]
+
+[dependencies.resource]
+path = ".."
+features = ["force-dynamic"]
