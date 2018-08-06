@@ -1,6 +1,6 @@
 [package]
 name = "resource"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
 description = """
 Macros for statically including assets in release mode, but dynamically loading them in debug mode.
