@@ -1,0 +1,8 @@
+[package]
+name = "static-feature-tests"
+version = "0.1.0"
+authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
+
+[dependencies.resource]
+path = ".."
+features = ["force-static"]
