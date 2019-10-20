@@ -22,3 +22,8 @@ echo "\033[36;1mRunning rustfmt:\033[0m"
 cargo fmt -- --check && \
     (cd static-feature-tests && cargo fmt -- --check) && \
     (cd dynamic-feature-tests && cargo fmt -- --check)
+
+echo -e "\033[36;1mRunning clippy:\033[0m"
+cargo clippy -- -D clippy::all && \
+    (cd static-feature-tests && cargo clippy -- -D clippy::all) && \
+    (cd dynamic-feature-tests && cargo clippy -- -D clippy::all)

@@ -1,7 +1,6 @@
-#[macro_use]
-extern crate resource;
-
 use std::borrow::Cow;
+
+use resource::{resource, resource_str};
 
 #[test]
 #[cfg(debug_assertions)]

@@ -1,5 +1,4 @@
-#[macro_use]
-extern crate resource;
+use resource::{resource, resource_str};
 
 fn rev_string(string: &str) -> String {
     string.chars().rev().collect()

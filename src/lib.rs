@@ -80,7 +80,10 @@ compile_error!("resource: Cannot enable both the force-static and force-dynamic 
 /// assert!(lib.contains("MACRO_RULES"));
 /// # }
 /// ```
-#[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
+#[cfg(any(
+    feature = "force-dynamic",
+    all(not(feature = "force-static"), debug_assertions)
+))]
 #[macro_export]
 macro_rules! resource_str {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
@@ -121,7 +124,10 @@ macro_rules! resource_str {
     };
 }
 
-#[cfg(any(feature = "force-static", all(not(feature = "force-dynamic"), not(debug_assertions))))]
+#[cfg(any(
+    feature = "force-static",
+    all(not(feature = "force-dynamic"), not(debug_assertions))
+))]
 #[macro_export]
 macro_rules! resource_str {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
@@ -210,7 +216,10 @@ macro_rules! resource_str {
 /// assert_eq!(&lib[0..4], b"//! ");
 /// # }
 /// ```
-#[cfg(any(feature = "force-dynamic", all(not(feature = "force-static"), debug_assertions)))]
+#[cfg(any(
+    feature = "force-dynamic",
+    all(not(feature = "force-static"), debug_assertions)
+))]
 #[macro_export]
 macro_rules! resource {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {
@@ -251,7 +260,10 @@ macro_rules! resource {
     };
 }
 
-#[cfg(any(feature = "force-static", all(not(feature = "force-dynamic"), not(debug_assertions))))]
+#[cfg(any(
+    feature = "force-static",
+    all(not(feature = "force-dynamic"), not(debug_assertions))
+))]
 #[macro_export]
 macro_rules! resource {
     ([ $($filenames:tt),* $(,)* ], $load_fn:expr) => {

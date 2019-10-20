@@ -19,7 +19,7 @@ resource = "~0.2.1"
 
 ```rust
 #[macro_use]
-extern crate resource;
+use resource::{resource, resource_str};
 
 let text = resource_str!("assets/text_asset.txt");
 println!("Text is: {}", text);
