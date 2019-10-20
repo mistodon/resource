@@ -46,39 +46,33 @@ compile_error!("resource: Cannot enable both the force-static and force-dynamic 
 /// Load a single text file:
 ///
 /// ```rust
-/// # #[macro_use]
-/// # extern crate resource;
-/// # fn main() {
+/// use resource::resource_str;
+///
 /// let toml = resource_str!("Cargo.toml");
 /// assert!(toml.contains("[package]"));
-/// # }
 /// ```
 ///
 /// Load an array or tuple of text files:
 ///
 /// ```rust
-/// # #[macro_use]
-/// # extern crate resource;
-/// # fn main() {
+/// use resource::resource_str;
+///
 /// let (toml, lib) = resource_str!(("Cargo.toml", "src/lib.rs"));
 /// let as_array = resource_str!(["Cargo.toml", "src/lib.rs"]);
 ///
 /// assert_eq!(toml, as_array[0]);
 /// assert_eq!(lib, as_array[1]);
-/// # }
 /// ```
 ///
 /// Load multiple text files and apply a transformation to each one:
 ///
 /// ```rust
-/// # #[macro_use]
-/// # extern crate resource;
-/// # fn main() {
+/// use resource::resource_str;
+///
 /// let [toml, lib] = resource_str!(["Cargo.toml", "src/lib.rs"], str::to_uppercase);
 ///
 /// assert!(toml.contains("RESOURCE"));
 /// assert!(lib.contains("MACRO_RULES"));
-/// # }
 /// ```
 #[cfg(any(
     feature = "force-dynamic",
@@ -181,40 +175,34 @@ macro_rules! resource_str {
 /// Load a single binary file:
 ///
 /// ```rust
-/// # #[macro_use]
-/// # extern crate resource;
-/// # fn main() {
+/// use resource::resource;
+///
 /// let toml = resource!("Cargo.toml");
 /// assert_eq!(&toml[0..9], b"[package]");
-/// # }
 /// ```
 ///
 /// Load an array or tuple of binary files:
 ///
 /// ```rust
-/// # #[macro_use]
-/// # extern crate resource;
-/// # fn main() {
+/// use resource::resource;
+///
 /// let (toml, lib) = resource!(("Cargo.toml", "src/lib.rs"));
 /// let as_array = resource!(["Cargo.toml", "src/lib.rs"]);
 ///
 /// assert_eq!(toml, as_array[0]);
 /// assert_eq!(lib, as_array[1]);
-/// # }
 /// ```
 ///
 /// Load binary files and apply a transformation to each one:
 ///
 /// ```rust
-/// # #[macro_use]
-/// # extern crate resource;
-/// # fn main() {
+/// use resource::resource;
+///
 /// let [toml, lib] = resource!(["Cargo.toml", "src/lib.rs"],
 ///     |bytes: &[u8]| bytes.to_ascii_uppercase());
 ///
 /// assert_eq!(&toml[0..9], b"[PACKAGE]");
 /// assert_eq!(&lib[0..4], b"//! ");
-/// # }
 /// ```
 #[cfg(any(
     feature = "force-dynamic",
