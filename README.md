@@ -1,24 +1,23 @@
 # resource
 
+[![Build Status](https://travis-ci.org/Mistodon/resource.svg?branch=master)](https://travis-ci.org/Mistodon/resource)
+[![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
+[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.3.0/resource/)
+
 The `resource` crate contains macros for statically including assets in release mode, but dynamically loading them in debug mode.
 
 This is primarily intended for games, allowing you to both avoid file IO in release builds and dynamically reload assets in debug mode.
 
 You can change the default behaviour, in debug or release mode, by using the `force-static` and `force-dynamic` features.
 
-[![Build Status](https://travis-ci.org/Mistodon/resource.svg?branch=master)](https://travis-ci.org/Mistodon/resource)
-[![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
-[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.2.1/resource/)
-
 ## Usage
 
 ```toml
 [dependencies]
-resource = "~0.2.1"
+resource = "~0.3.0"
 ```
 
 ```rust
-#[macro_use]
 use resource::{resource, resource_str};
 
 let text = resource_str!("assets/text_asset.txt");
