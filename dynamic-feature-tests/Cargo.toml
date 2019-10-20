@@ -2,6 +2,7 @@
 name = "dynamic-feature-tests"
 version = "0.1.0"
 authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
+edition = "2018"
 
 [dependencies.resource]
 path = ".."

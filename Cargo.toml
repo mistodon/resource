@@ -1,7 +1,8 @@
 [package]
 name = "resource"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
+edition = "2018"
 description = """
 Macros for statically including assets in release mode, but dynamically loading them in debug mode.
 
@@ -13,12 +14,12 @@ keywords = ["static", "include", "assets", "release"]
 categories = ["filesystem", "games"]
 license = "CC0-1.0"
 
+[badges]
+travis-ci = { repository = "mistodon/resource", branch = "master" }
+
 [dependencies]
 
 [features]
 default = []
 force-static = []
 force-dynamic = []
-
-[badges]
-travis-ci = { repository = "Mistodon/resource" }

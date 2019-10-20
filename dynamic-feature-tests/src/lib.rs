@@ -1,7 +1,6 @@
 #![cfg(test)]
 
-#[macro_use]
-extern crate resource;
+use resource::{resource, resource_str};
 
 #[test]
 fn include_str_asset_dynamic() {
