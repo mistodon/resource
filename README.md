@@ -1,6 +1,6 @@
 # resource
 
-[![Build Status](https://travis-ci.org/Mistodon/resource.svg?branch=master)](https://travis-ci.org/Mistodon/resource)
+[![Build Status](https://travis-ci.org/mistodon/resource.svg?branch=master)](https://travis-ci.org/mistodon/resource)
 [![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
 [![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.3.0/resource/)
 
