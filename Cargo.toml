@@ -1,6 +1,6 @@
 [package]
 name = "resource"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
 edition = "2018"
 description = """
