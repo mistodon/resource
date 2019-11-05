@@ -1,9 +1,0 @@
-[package]
-name = "static-feature-tests"
-version = "0.1.0"
-authors = ["Claire Harris <wishing.engine@gmail.com>"]
-edition = "2018"
-
-[dependencies.resource]
-path = ".."
-features = ["force-static"]

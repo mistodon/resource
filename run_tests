@@ -1,29 +1,28 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-echo "\033[36;1mRunning tests on debug with default features:\033[0m"
+echo -e "\033[36;1mRunning debug tests:\033[0m"
 cargo test
 
-echo "\033[36;1mRunning tests on release with default features:\033[0m"
+echo -e "\033[36;1mRunning debug/force-static tests:\033[0m"
+cargo test --features force-static
+
+echo -e "\033[36;1mRunning debug/force-dynamic tests:\033[0m"
+cargo test --features force-dynamic
+
+echo -e "\033[36;1mRunning release tests:\033[0m"
 cargo test --release
 
-echo "\033[36;1mRunning static-feature-tests:\033[0m"
-(cd static-feature-tests && \
-    cargo test && \
-    cargo test --release)
+echo -e "\033[36;1mRunning release/force-static tests:\033[0m"
+cargo test --release --features force-static
 
-echo "\033[36;1mRunning dynamic-feature-tests:\033[0m"
-(cd dynamic-feature-tests && \
-    cargo test && \
-    cargo test --release)
+echo -e "\033[36;1mRunning release/force-dynamic tests:\033[0m"
+cargo test --release --features force-dynamic
 
-echo "\033[36;1mRunning rustfmt:\033[0m"
-cargo fmt -- --check && \
-    (cd static-feature-tests && cargo fmt -- --check) && \
-    (cd dynamic-feature-tests && cargo fmt -- --check)
+echo -e "\033[36;1mRunning rustfmt:\033[0m"
+cargo fmt -- --check
 
 echo -e "\033[36;1mRunning clippy:\033[0m"
-cargo clippy -- -D clippy::all && \
-    (cd static-feature-tests && cargo clippy -- -D clippy::all) && \
-    (cd dynamic-feature-tests && cargo clippy -- -D clippy::all)
+cargo clippy -- -D clippy::all
+cargo clippy --release -- -D clippy::all
