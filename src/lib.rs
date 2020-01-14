@@ -761,6 +761,7 @@ mod dynamic_reload_tests {
 
     #[test]
     fn changed() {
+        // For some reason, `changed()` doesn't seem to work on Travis.
         if option_env!("TRAVIS").is_none() {
             std::fs::write("tests/temp/dynamic_changed.txt", "Old").unwrap();
 
@@ -786,6 +787,7 @@ mod dynamic_reload_tests {
 
     #[test]
     fn reload_if_changed() {
+        // For some reason, `changed()` doesn't seem to work on Travis.
         if option_env!("TRAVIS").is_none() {
             std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "Old").unwrap();
 
