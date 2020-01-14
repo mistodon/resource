@@ -761,14 +761,15 @@ mod dynamic_reload_tests {
 
     #[test]
     fn changed() {
-        assert!(cfg!(debug_assertions));
-        std::fs::write("tests/temp/dynamic_changed.txt", "Old").unwrap();
+        if option_env("TRAVIS").is_none() {
+            std::fs::write("tests/temp/dynamic_changed.txt", "Old").unwrap();
 
-        let res = resource_str!("tests/temp/dynamic_changed.txt");
-        assert!(!res.changed());
+            let res = resource_str!("tests/temp/dynamic_changed.txt");
+            assert!(!res.changed());
 
-        std::fs::write("tests/temp/dynamic_changed.txt", "New").unwrap();
-        assert!(res.changed());
+            std::fs::write("tests/temp/dynamic_changed.txt", "New").unwrap();
+            assert!(res.changed());
+        }
     }
 
     #[test]
@@ -785,15 +786,16 @@ mod dynamic_reload_tests {
 
     #[test]
     fn reload_if_changed() {
-        assert!(cfg!(debug_assertions));
-        std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "Old").unwrap();
+        if option_env("TRAVIS").is_none() {
+            std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "Old").unwrap();
 
-        let mut res = resource_str!("tests/temp/dynamic_reload_if_changed.txt");
-        assert!(!res.reload_if_changed());
-        assert_eq!(res.as_ref(), "Old");
+            let mut res = resource_str!("tests/temp/dynamic_reload_if_changed.txt");
+            assert!(!res.reload_if_changed());
+            assert_eq!(res.as_ref(), "Old");
 
-        std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "New").unwrap();
-        assert!(res.reload_if_changed());
-        assert_eq!(res.as_ref(), "New");
+            std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "New").unwrap();
+            assert!(res.reload_if_changed());
+            assert_eq!(res.as_ref(), "New");
+        }
     }
 }

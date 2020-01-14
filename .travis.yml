@@ -1,5 +1,7 @@
 language: rust
 cache: cargo
+env:
+  - TRAVIS=1
 matrix:
   include:
     - rust: stable
