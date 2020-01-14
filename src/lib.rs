@@ -722,8 +722,13 @@ mod static_reload_tests {
         let res = resource_str!("tests/temp/static_changed.txt");
         assert!(!res.changed());
 
+        std::fs::write("tests/temp/static_changed.txt", "New").unwrap();
+        let changed = res.changed();
+
+        // Revert
         std::fs::write("tests/temp/static_changed.txt", "Old").unwrap();
-        assert!(!res.changed());
+
+        assert!(!changed);
     }
 
     #[test]
@@ -731,10 +736,14 @@ mod static_reload_tests {
         std::fs::write("tests/temp/static_reload.txt", "Old").unwrap();
 
         let mut res = resource_str!("tests/temp/static_reload.txt");
-        std::fs::write("tests/temp/static_reload.txt", "New").unwrap();
-
         assert_eq!(res.as_ref(), "Old");
+
+        std::fs::write("tests/temp/static_reload.txt", "New").unwrap();
         res.reload();
+
+        // Revert
+        std::fs::write("tests/temp/static_reload.txt", "Old").unwrap();
+
         assert_eq!(res.as_ref(), "Old");
     }
 
@@ -747,7 +756,12 @@ mod static_reload_tests {
         assert_eq!(res.as_ref(), "Old");
 
         std::fs::write("tests/temp/static_reload_if_changed.txt", "New").unwrap();
-        assert!(!res.reload_if_changed());
+        let changed = res.reload_if_changed();
+
+        // Revert
+        std::fs::write("tests/temp/static_reload_if_changed.txt", "Old").unwrap();
+
+        assert!(!changed);
         assert_eq!(res.as_ref(), "Old");
     }
 }
