@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mistodon/resource.svg?branch=master)](https://travis-ci.org/mistodon/resource)
 [![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
-[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.3.0/resource/)
+[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.4.0/resource/)
 
 The `resource` crate contains macros for statically including assets in release mode, but dynamically loading them in debug mode.
 
@@ -10,12 +10,18 @@ This is primarily intended for games, allowing you to both avoid file IO in rele
 
 You can change the default behaviour, in debug or release mode, by using the `force-static` and `force-dynamic` features.
 
+When resources are included statically, they are constant in memory and are included in the final binary executable. This allows you to avoid packaging individual files with the released application.
+
+When resources are included dynamically, they are loaded from file at runtime, and can therefore be switched and updated while the app runs.
+
 ## Usage
 
 ```toml
 [dependencies]
-resource = "~0.3.0"
+resource = "~0.4.0"
 ```
+
+### Basic usage
 
 ```rust
 use resource::{resource, resource_str};
@@ -32,10 +38,22 @@ println!("Contents of the three files are: `{}`, `{}`, `{}`");
 let decoded_images = resource!(["a.png", "b.png", "c.png"], |image: &[u8]| decode(image));
 ```
 
-## Internals
+### Reloading
 
-The `resource_str!` and `resource!` macros return [`Cow`](https://doc.rust-lang.org/std/borrow/enum.Cow.html) values - `Cow<'static, str>` and `Cow<'static, [u8]>` respectively.
+```rust
+use resource::resource_str;
 
-If you're not familiar with the `Cow` type, what this means is that under the hood, they can be either a reference to some `const` data (in release mode) or some actual owned data on the heap (in debug mode).
+let mut message = resource_str!("message.txt");
 
-You shouldn't have to care about this though because the above `Cow` types can deref to `&str` and `&[u8]` respectively. Just pass them by reference and treat them as strings/slices.
+loop {
+    println!("Hello: {}", message.as_ref());
+
+    // Wait one second
+    std::thread::sleep(std::time::Duration::from_secs(5));
+
+    // You can edit the contents of message.txt
+
+    // Reload the message so the new version is printed next iteration
+    message.reload_if_changed();
+}
+```
