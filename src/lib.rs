@@ -28,10 +28,15 @@
 #[cfg(all(feature = "force-static", feature = "force-dynamic"))]
 compile_error!("resource: Cannot enable both the force-static and force-dynamic features.");
 
-pub use self::wrapper::Resource;
+pub use self::resource::Resource;
 
 use std::path::Path;
 
+/// Used internally.
+///
+/// Only used by the dynamic versions of `Resource` to make it generic
+/// over both strings and bytes. Represents something that can be read
+/// straight from a file.
 pub trait ReadFromFile {
     fn read_from_file(path: &Path) -> Self;
 }
@@ -56,7 +61,7 @@ impl ReadFromFile for Vec<u8> {
     feature = "force-dynamic",
     all(not(feature = "force-static"), debug_assertions)
 ))]
-mod wrapper {
+mod resource {
     use std::{
         borrow::{Cow, ToOwned},
         convert::AsRef,
@@ -67,6 +72,21 @@ mod wrapper {
 
     use crate::ReadFromFile;
 
+    /// A resource (string or binary) loaded in memory.
+    ///
+    /// In debug mode, this structure contains the data, the path to the file,
+    /// and a timestamp in order to support the `reload_if_changed` method.
+    ///
+    /// In release mode, it contains only an immutable, static reference to
+    /// the data.
+    ///
+    /// This struct implements `Deref` and `AsRef` (for the `&str`
+    /// and `&[u8]` types respectively) which allows you to refer
+    /// transparently to the data.
+    ///
+    /// Alternatively, it also implements `Into<Cow<'static, T>>`. In debug mode,
+    /// this will return a `Cow` that owns the data. In release mode, it returns
+    /// a `Cow` that borrows the static data.
     pub struct Resource<B>(<B as ToOwned>::Owned, PathBuf, SystemTime)
     where
         B: 'static + ToOwned + ?Sized;
@@ -77,7 +97,9 @@ mod wrapper {
         B::Owned: ReadFromFile,
     {
         #[doc(hidden)]
-        pub fn from_file(path: &str) -> Self {
+        /// Please don't call this directly. It has to be public for the macro
+        /// but you shouldn't call it because it's not stable.
+        pub fn _from_file(path: &str) -> Self {
             let path = PathBuf::from(path);
             let data = B::Owned::read_from_file(&path);
             let modified = Self::modified(&path).unwrap_or(SystemTime::UNIX_EPOCH);
@@ -91,22 +113,34 @@ mod wrapper {
                 .ok()
         }
 
+        /// Returns `true` if the resource has changed since loading.
+        ///
+        /// In release mode, always returns `false`.
         pub fn changed(&self) -> bool {
             let modified = Self::modified(&self.1);
             modified.is_some() && modified != Some(self.2)
         }
 
-        pub fn reload_if_changed(&mut self) {
-            if self.changed() {
-                self.reload();
-            }
-        }
-
+        /// Reloads the resource.
+        ///
+        /// In release mode, does nothing.
         pub fn reload(&mut self) {
             let data = B::Owned::read_from_file(&self.1);
             let modified = Self::modified(&self.1).unwrap_or(SystemTime::UNIX_EPOCH);
             self.0 = data;
             self.2 = modified;
+        }
+
+        /// Reloads the resource only if it has changed since the previous
+        /// load. Returns `true` if the resource was reloaded.
+        ///
+        /// In release mode, does nothing.
+        pub fn reload_if_changed(&mut self) -> bool {
+            let changed = self.changed();
+            if changed {
+                self.reload();
+            }
+            changed
         }
     }
 
@@ -156,7 +190,7 @@ mod wrapper {
     feature = "force-static",
     all(not(feature = "force-dynamic"), not(debug_assertions))
 ))]
-mod wrapper {
+mod resource {
     use std::{
         borrow::{Cow, ToOwned},
         convert::AsRef,
@@ -175,7 +209,9 @@ mod wrapper {
         B::Owned: ReadFromFile,
     {
         #[doc(hidden)]
-        pub fn from_data(data: &'static B) -> Self {
+        /// Please don't call this directly. It has to be public for the macro
+        /// but you shouldn't call it because it's not stable.
+        pub fn _from_data(data: &'static B) -> Self {
             Resource(data)
         }
 
@@ -183,7 +219,9 @@ mod wrapper {
             false
         }
 
-        pub fn reload_if_changed(&mut self) {}
+        pub fn reload_if_changed(&mut self) -> bool {
+            false
+        }
 
         pub fn reload(&mut self) {}
     }
@@ -307,7 +345,7 @@ macro_rules! resource_str {
     };
 
     ($filename:tt) => {
-        $crate::Resource::<str>::from_file(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename))
+        $crate::Resource::<str>::_from_file(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename))
     };
 }
 
@@ -340,7 +378,7 @@ macro_rules! resource_str {
     };
 
     ($filename:tt) => {
-        $crate::Resource::<str>::from_data(include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename)))
+        $crate::Resource::<str>::_from_data(include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename)))
     };
 }
 
@@ -423,7 +461,7 @@ macro_rules! resource {
     };
 
     ($filename:tt) => {
-        $crate::Resource::<[u8]>::from_file(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename))
+        $crate::Resource::<[u8]>::_from_file(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename))
     };
 }
 
@@ -456,7 +494,7 @@ macro_rules! resource {
     };
 
     ($filename:tt) => {
-        $crate::Resource::<[u8]>::from_data(include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename)))
+        $crate::Resource::<[u8]>::_from_data(include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/", $filename)))
     };
 }
 
@@ -667,5 +705,93 @@ mod static_tests {
             Cow::Borrowed(s) if s == &[48, 49, 50, 51, 52] => (),
             _ => panic!("Expected borrowed bytes!"),
         }
+    }
+}
+
+#[cfg(test)]
+#[cfg(any(
+    feature = "force-static",
+    all(not(feature = "force-dynamic"), not(debug_assertions))
+))]
+mod static_reload_tests {
+
+    #[test]
+    fn changed() {
+        std::fs::write("tests/temp/static_changed.txt", "Old").unwrap();
+
+        let res = resource_str!("tests/temp/static_changed.txt");
+        assert!(!res.changed());
+
+        std::fs::write("tests/temp/static_changed.txt", "Old").unwrap();
+        assert!(!res.changed());
+    }
+
+    #[test]
+    fn reload() {
+        std::fs::write("tests/temp/static_reload.txt", "Old").unwrap();
+
+        let mut res = resource_str!("tests/temp/static_reload.txt");
+        std::fs::write("tests/temp/static_reload.txt", "New").unwrap();
+
+        assert_eq!(res.as_ref(), "Old");
+        res.reload();
+        assert_eq!(res.as_ref(), "Old");
+    }
+
+    #[test]
+    fn reload_if_changed() {
+        std::fs::write("tests/temp/static_reload_if_changed.txt", "Old").unwrap();
+
+        let mut res = resource_str!("tests/temp/static_reload_if_changed.txt");
+        assert!(!res.reload_if_changed());
+        assert_eq!(res.as_ref(), "Old");
+
+        std::fs::write("tests/temp/static_reload_if_changed.txt", "New").unwrap();
+        assert!(!res.reload_if_changed());
+        assert_eq!(res.as_ref(), "Old");
+    }
+}
+
+#[cfg(test)]
+#[cfg(any(
+    feature = "force-dynamic",
+    all(not(feature = "force-static"), debug_assertions)
+))]
+mod dynamic_reload_tests {
+
+    #[test]
+    fn changed() {
+        std::fs::write("tests/temp/dynamic_changed.txt", "Old").unwrap();
+
+        let res = resource_str!("tests/temp/dynamic_changed.txt");
+        assert!(!res.changed());
+
+        std::fs::write("tests/temp/dynamic_changed.txt", "New").unwrap();
+        assert!(res.changed());
+    }
+
+    #[test]
+    fn reload() {
+        std::fs::write("tests/temp/dynamic_reload.txt", "Old").unwrap();
+
+        let mut res = resource_str!("tests/temp/dynamic_reload.txt");
+        std::fs::write("tests/temp/dynamic_reload.txt", "New").unwrap();
+
+        assert_eq!(res.as_ref(), "Old");
+        res.reload();
+        assert_eq!(res.as_ref(), "New");
+    }
+
+    #[test]
+    fn reload_if_changed() {
+        std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "Old").unwrap();
+
+        let mut res = resource_str!("tests/temp/dynamic_reload_if_changed.txt");
+        assert!(!res.reload_if_changed());
+        assert_eq!(res.as_ref(), "Old");
+
+        std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "New").unwrap();
+        assert!(res.reload_if_changed());
+        assert_eq!(res.as_ref(), "New");
     }
 }
