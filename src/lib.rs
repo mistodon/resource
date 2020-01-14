@@ -761,7 +761,7 @@ mod dynamic_reload_tests {
 
     #[test]
     fn changed() {
-        if option_env("TRAVIS").is_none() {
+        if option_env!("TRAVIS").is_none() {
             std::fs::write("tests/temp/dynamic_changed.txt", "Old").unwrap();
 
             let res = resource_str!("tests/temp/dynamic_changed.txt");
@@ -786,7 +786,7 @@ mod dynamic_reload_tests {
 
     #[test]
     fn reload_if_changed() {
-        if option_env("TRAVIS").is_none() {
+        if option_env!("TRAVIS").is_none() {
             std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "Old").unwrap();
 
             let mut res = resource_str!("tests/temp/dynamic_reload_if_changed.txt");
