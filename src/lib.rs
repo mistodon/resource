@@ -32,6 +32,14 @@ pub use self::resource::Resource;
 
 use std::path::Path;
 
+#[cfg(feature = "experimental-resource-list")]
+#[proc_macro_hack::proc_macro_hack]
+pub use resource_list_proc_macro::resource_list;
+
+#[cfg(feature = "experimental-resource-list")]
+#[proc_macro_hack::proc_macro_hack]
+pub use resource_list_proc_macro::resource_str_list;
+
 /// Used internally.
 ///
 /// Only used by the dynamic versions of `Resource` to make it generic
@@ -812,6 +820,31 @@ mod dynamic_reload_tests {
             std::fs::write("tests/temp/dynamic_reload_if_changed.txt", "New").unwrap();
             assert!(res.reload_if_changed());
             assert_eq!(res.as_ref(), "New");
+        }
+    }
+}
+
+#[cfg(feature = "experimental-resource-list")]
+mod resource_list_tests {
+    #[test]
+    fn test_resource_str_list() {
+        let files = resource_str_list!("tests/resource_list_test_files");
+        let names = ["file_a.txt", "file_b.txt", "file_c.txt"];
+        let contents = ["A\n", "B\n", "C\n"];
+        for i in 0..files.len() {
+            assert_eq!(files[i].0, names[i]);
+            assert_eq!(files[i].1.as_ref(), contents[i]);
+        }
+    }
+
+    #[test]
+    fn test_resource_list() {
+        let files = resource_list!("tests/resource_list_test_files");
+        let names = ["file_a.txt", "file_b.txt", "file_c.txt"];
+        let contents = [b"A\n", b"B\n", b"C\n"];
+        for i in 0..files.len() {
+            assert_eq!(files[i].0, names[i]);
+            assert_eq!(files[i].1.as_ref(), contents[i]);
         }
     }
 }

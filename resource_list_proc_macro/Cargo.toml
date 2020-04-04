@@ -1,0 +1,20 @@
+[package]
+name = "resource_list_proc_macro"
+version = "0.4.1"
+authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
+edition = "2018"
+description = """
+Procedural macro to implement' the `resource` crate's `resource_list!` feature.
+"""
+repository = "https://github.com/mistodon/resource"
+readme = "README.md"
+keywords = []
+categories = []
+license = "CC0-1.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro-hack = "~0.5.15"
+quote = "~1.0.3"
