@@ -12,8 +12,7 @@ fn read_path_argument(path: TokenStream) -> PathBuf {
 }
 
 fn enumerate_files_paths(path: &Path) -> (Vec<String>, Vec<String>) {
-    let mut files = vec![];
-    let mut paths = vec![];
+    let mut files_paths = vec![];
 
     let entries = std::fs::read_dir(path)
         .unwrap_or_else(|e| panic!("Failed to read directory `{}`: {}", path.display(), e));
@@ -32,10 +31,16 @@ fn enumerate_files_paths(path: &Path) -> (Vec<String>, Vec<String>) {
             let mut path = path.to_owned();
             path.push(&file_name);
 
-            files.push(file_name.to_string_lossy().into_owned());
-            paths.push(path.to_string_lossy().into_owned());
+            let file_name = file_name.to_string_lossy().into_owned();
+            if !file_name.starts_with('.') {
+                files_paths.push((file_name, path.to_string_lossy().into_owned()));
+            }
         }
     }
+
+    files_paths.sort();
+
+    let (files, paths) = files_paths.into_iter().unzip();
 
     (files, paths)
 }
