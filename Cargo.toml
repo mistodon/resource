@@ -1,6 +1,6 @@
 [package]
 name = "resource"
-version = "0.4.1"
+version = "0.5.0"
 authors = ["***Realname*** ***Lastname*** <***redacted.email@redacted.nope***>"]
 edition = "2018"
 description = """
@@ -18,7 +18,7 @@ license = "CC0-1.0"
 travis-ci = { repository = "mistodon/resource", branch = "master" }
 
 [dependencies]
-resource_list_proc_macro = { path = "./resource_list_proc_macro", optional = true }
+resource_list_proc_macro = { version = "=0.5.0", path = "./resource_list_proc_macro", optional = true }
 proc-macro-hack = { version = "~0.5.15", optional = true }
 
 [workspace]
