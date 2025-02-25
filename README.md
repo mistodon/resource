@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mistodon/resource.svg?branch=master)](https://travis-ci.org/mistodon/resource)
 [![Crates.io](https://img.shields.io/crates/v/resource.svg)](https://crates.io/crates/resource)
-[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.5.0/resource/)
+[![Docs.rs](https://docs.rs/resource/badge.svg)](https://docs.rs/resource/0.6.0/resource/)
 
 The `resource` crate contains macros for statically including assets in release mode, but dynamically loading them in debug mode.
 
@@ -18,7 +18,7 @@ When resources are included dynamically, they are loaded from file at runtime, a
 
 ```toml
 [dependencies]
-resource = "~0.5.0"
+resource = "0.6.0"
 ```
 
 ### Basic usage
