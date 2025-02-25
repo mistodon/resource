@@ -1,7 +1,6 @@
 use std::path::{Path, PathBuf};
 
 use proc_macro::TokenStream;
-
 use quote::quote;
 
 fn read_path_argument(path: TokenStream) -> PathBuf {
@@ -45,7 +44,7 @@ fn enumerate_files_paths(path: &Path) -> (Vec<String>, Vec<String>) {
     (files, paths)
 }
 
-#[proc_macro_hack::proc_macro_hack]
+#[proc_macro]
 pub fn resource_list(path: TokenStream) -> TokenStream {
     let path = read_path_argument(path);
     let (files, paths) = enumerate_files_paths(&path);
@@ -58,7 +57,7 @@ pub fn resource_list(path: TokenStream) -> TokenStream {
     .into()
 }
 
-#[proc_macro_hack::proc_macro_hack]
+#[proc_macro]
 pub fn resource_str_list(path: TokenStream) -> TokenStream {
     let path = read_path_argument(path);
     let (files, paths) = enumerate_files_paths(&path);

@@ -32,12 +32,8 @@ pub use self::resource::Resource;
 
 use std::path::Path;
 
-#[cfg(feature = "experimental-resource-list")]
-#[proc_macro_hack::proc_macro_hack]
 pub use resource_list_proc_macro::resource_list;
 
-#[cfg(feature = "experimental-resource-list")]
-#[proc_macro_hack::proc_macro_hack]
 pub use resource_list_proc_macro::resource_str_list;
 
 /// Used internally.
@@ -116,7 +112,7 @@ mod resource {
         }
 
         fn modified(path: &Path) -> Option<SystemTime> {
-            std::fs::metadata(&path)
+            std::fs::metadata(path)
                 .and_then(|metadata| metadata.modified())
                 .ok()
         }
@@ -174,6 +170,9 @@ mod resource {
         }
     }
 
+    // We don't want a `From` implementation because the `Resource`
+    // type itself is an implementation detail. Don't construct one!
+    #[allow(clippy::from_over_into)]
     impl<B> Into<Cow<'static, B>> for Resource<B>
     where
         B: 'static + ToOwned + ?Sized,
@@ -256,6 +255,9 @@ mod resource {
         }
     }
 
+    // We don't want a `From` implementation because the `Resource`
+    // type itself is an implementation detail. Don't construct one!
+    #[allow(clippy::from_over_into)]
     impl<B> Into<Cow<'static, B>> for Resource<B>
     where
         B: 'static + ToOwned + ?Sized,
@@ -824,8 +826,10 @@ mod dynamic_reload_tests {
     }
 }
 
-#[cfg(feature = "experimental-resource-list")]
+#[cfg(test)]
 mod resource_list_tests {
+    use super::*;
+
     #[test]
     fn test_resource_str_list() {
         let files = resource_str_list!("tests/resource_list_test_files");
